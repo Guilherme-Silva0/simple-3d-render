@@ -45,11 +45,21 @@ public class DemoViewer {
                         Color.BLUE));
 
                 double heading = Math.toRadians(headingSlider.getValue());
-                Matrix3 transform = new Matrix3(new double[]{
-                        Math.cos(heading), 0, -Math.sin(heading),
+
+                Matrix3 headingTransform = new Matrix3(new double[]{
+                        Math.cos(heading), 0, Math.sin(heading),
                         0, 1, 0,
-                        Math.sin(heading), 0, Math.cos(heading)
+                        -Math.sin(heading), 0, Math.cos(heading)
                 });
+
+                double pitch = Math.toRadians(pitchSlider.getValue());
+                Matrix3 pitchTransform = new Matrix3(new double[]{
+                        1, 0, 0,
+                        0, Math.cos(pitch), Math.sin(pitch),
+                        0, -Math.sin(pitch), Math.cos(pitch)
+                });
+
+                Matrix3 transform = headingTransform.multiply(pitchTransform);
 
                 g2.translate(getWidth() / 2, getHeight() / 2);
                 g2.setColor(Color.WHITE);
@@ -116,7 +126,8 @@ class Matrix3 {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 for (int i = 0; i < 3; i++) {
-                    result[row * 3 + col] += this.values[row * 3 + 1] * other.values[i * 3 + col];
+                    result[row * 3 + col] +=
+                            this.values[row * 3 + i] * other.values[i * 3 + col];
                 }
             }
         }
